@@ -19,31 +19,32 @@ const service = require('feathers-rethinkdb')
 
 const app = feathers()
 const r = rethink({
-  db: 'yalo'
+   db: 'yalo'
 })
 
 app.configure(configuration(path.join(__dirname, '..')))
 
 app.use(compress())
-  .options('*', cors())
-  .use(cors())
-  .use(favicon( path.join(app.get('public'), 'favicon.ico') ))
-  .use('/', serveStatic( app.get('public') ))
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-  .use('messages',service({
-    Model: r,
-    name: 'messages',
-    // Enable pagination
-    paginate: {
-      default: 2,
-      max: 4
-    }
-  }))
-  .configure(hooks())
-  .configure(rest())
-  .configure(socketio())
-  .configure(services)
-  .configure(middleware)
+   .options('*', cors())
+   .use(cors())
+   .use(favicon( path.join(app.get('public'), 'favicon.ico') ))
+   .use('/', serveStatic( app.get('public') ))
+   .use(bodyParser.json())
+   .use(bodyParser.urlencoded({ extended: true }))
+   .configure(hooks())
+   .configure(rest())
+   .configure(socketio())
+   .configure(services)
+   .use('/messages',service({
+      Model: r,
+      name: 'messages',
+      // Enable pagination
+      paginate: {
+         default: 2,
+         max: 4
+      }
+   }))
+
+   .configure(middleware)
 
 module.exports = app
